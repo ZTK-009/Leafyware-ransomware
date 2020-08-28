@@ -6,7 +6,6 @@ import socket
 import requests
 import os
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from pathlib import Path
@@ -15,14 +14,11 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////" + os.getcwd() + "/database.db"
 app.config['SECRET_KEY'] = 'thisissecret'
 db = SQLAlchemy(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 #admin = Admin(app)
-admin = Admin(app)
+admin = Admin(app, name='Leafyware', template_mode='bootstrap3')
 
 
-class Data(UserMixin, db.Model):
+class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Username = db.Column(db.String(20), nullable=False)
     Ip = db.Column(db.String(20), nullable=False)
@@ -30,17 +26,8 @@ class Data(UserMixin, db.Model):
     Uniqe_iD = db.Column(db.String(64), nullable=False)
     Iv = db.Column(db.String(64), nullable=False)
     Aes = db.Column(db.String(64), nullable=False)
-    
-
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    Username = db.Column(db.String(20), nullable=False)
-    Password = db.Column(db.String(20), nullable=False)
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 version = str(0.1) + " beta"
 
@@ -99,28 +86,8 @@ def add():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-"""   
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-"""
-class UserModelView(ModelView):
-    def is_accessible(self):
-        try:
-            if current_user.username == "weed_Ok":
-                return True
-            return True
-        except:
-            return True
 
-    def _handle_view(self, name):
-        if not self.is_accessible():
-            return redirect(url_for('login'))
-
-admin.add_view(UserModelView(Data, db.session))
-admin.add_view(UserModelView(User, db.session))
+admin.add_view(ModelView(Data, db.session))
 
 if __name__ == '__main__':
     app.run(debug=True)
