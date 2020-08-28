@@ -9,7 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_socketio import SocketIO
 from pathlib import Path
 
 app = Flask(__name__)
@@ -21,7 +20,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 #admin = Admin(app)
 admin = Admin(app)
-socketio = SocketIO(app)
 
 
 class Data(UserMixin, db.Model):
@@ -53,14 +51,6 @@ def hello_world():
     return render_template("index.html", Cpu=cpux, Mem=ram.percent, date=date.today(), version=version)
 
 
-@app.route('/builder')
-def builder():
-    distrox = socket.gethostname()
-    try:
-        user = os.environ['USERNAME']
-    except:
-        user = os.environ['USER']
-    return render_template("builder.html",distro=distrox, user=user)
 
 @app.route('/start')
 #@login_required
@@ -108,25 +98,6 @@ def add():
     response = jsonify({'success': 'new user '+username+' has been created'})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
-def writeline(linenumber):
-    homepath = str(Path.home())
-    a_file = open(homepath + "/go/src/ninja/main.go", "r")
-    list_of_lines = a_file.readlines()
-    list_of_lines[linenumber] = "Line2\n"
-    a_file = open(homepath + "/go/src/ninja/main.go", "w")
-    a_file.writelines(list_of_lines)
-    a_file.close()
-
-@socketio.on('startbuild')
-def startbuilding(data):
-    deathnote = data["note"]
-    cryptpath = data["cryptpath"]
-    host = data["host"]
-    wallpaper = data["wallpaper"]
-    writeline
-
-
 
 """   
 @app.route('/logout')
